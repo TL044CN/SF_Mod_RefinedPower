@@ -293,5 +293,6 @@ void ARPMTurbineBuilding::netFunc_setSteamDiscardPercent(float value) {
 //TL044CN: FIN Integration Patch 0.0.3
 //  added override function for the base Class's Check Function to correctly display Running State.
 bool ARPMTurbineBuilding::CheckMPBuildingRunningState() {
-    return EProductionStatus.IS_STANDBY;
+	EProductionStatus s = GetProductionIndicatorStatus();
+	return s == EProductionStatus::IS_STANDBY | s == EProductionStatus::IS_ERROR | s == EProductionStatus::IS_MAX | s == EProductionStatus::IS_NONE;
 }
