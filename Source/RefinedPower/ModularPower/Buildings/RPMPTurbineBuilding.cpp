@@ -148,13 +148,9 @@ void ARPMPTurbineBuilding::CalcTurbineState()
     TransferToFluidBuffer();
 
 //TL044CN: FIN Integration Patch 0.0.3
-//         added dependency on Standby and chenge running value based on if the Turbine is currently processing steam
-//         (the else is in there to guard against rapid m_running changes instead of there being a constant m_running=false)
-    if (CanStartSteamConsumption() && !m_Standby) {
-        m_running = true;
+//  Implemented changes from a seperate Pull request by nbrugger-tgm
+    if (CanStartSteamConsumption() && !EProductionStatus.IS_STANDBY && GetProductionIndicatorStatus()) {
         ConvertSteamToRPM();
-    } else {
-        m_running = false;
     }
 
     int NewRPM = mCurrentTurbineRPM;
@@ -297,5 +293,5 @@ void ARPMTurbineBuilding::netFunc_setSteamDiscardPercent(float value) {
 //TL044CN: FIN Integration Patch 0.0.3
 //  added override function for the base Class's Check Function to correctly display Running State.
 bool ARPMTurbineBuilding::CheckMPBuildingRunningState() {
-    return !m_running;
+    return EProductionStatus.IS_STANDBY;
 }
