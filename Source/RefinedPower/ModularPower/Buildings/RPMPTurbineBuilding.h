@@ -54,7 +54,7 @@ public:
 
     //TL044CN: FIN Integration Patch 0.0.3
     // Added Running State Checking as override for the Base Class's function
-    bool CehckMPBuildingRunningState() override;
+    bool CheckMPBuildingRunningState() override;
 
 
     //RCO Functions
