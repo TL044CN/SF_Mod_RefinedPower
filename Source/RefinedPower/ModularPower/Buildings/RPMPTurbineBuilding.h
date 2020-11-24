@@ -52,6 +52,11 @@ public:
 
     void ReduceRPM();
 
+    //TL044CN: FIN Integration Patch 0.0.3
+    // Added Running State Checking as override for the Base Class's function
+    bool CehckMPBuildingRunningState() override;
+
+
     //RCO Functions
     UFUNCTION(BlueprintCallable, Category = "RefinedPower|ModularPower|Turbine")
     void SetSteamDiscard(float value);
@@ -84,6 +89,11 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RefinedPower")
     float mRPMMultiplier = 2;
 
+    //TL044CN: FIN Integration Patch 0.0.3
+    // Im not sure how this works but this probably adds m_Standby as a variable to mess with maybe even ingame?
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "RefinedPower")
+    bool m_Standby = false;
+
     // Steam Stuff
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RefinedPower")
@@ -110,6 +120,7 @@ public:
     UFUNCTION()
     float netFunc_getSteamDiscardPercent();
 
+    //TL044CN: FIN Integration Patch 0.0.2
     UFUNCTION()
     void netFunc_setSteamDiscardPercent(float);
 
@@ -131,4 +142,8 @@ public:
 
     int mInputInvIndex = 0;
     int mOutputInvIndex = 1;
+
+    //TL044CN: FIN Integration Patch 0.0.3
+    //Wether the Turbine is running or not. Depends on m_Standby (which probably does nothing as of now)
+    bool m_running = false;
 };

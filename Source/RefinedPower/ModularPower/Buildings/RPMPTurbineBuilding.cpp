@@ -49,7 +49,7 @@ void ARPMPTurbineBuilding::Factory_Tick(float dt)
     Super::Factory_Tick(dt);
 
     if (HasAuthority())
-    {        
+    {
         CollectSteam(dt);
         OutputSteam(dt);
         CalcTurbineState();
@@ -144,12 +144,17 @@ void ARPMPTurbineBuilding::CalcTurbineState()
     int PrevRPM = mCurrentTurbineRPM;
 
     ReduceRPM();
-    
+
     TransferToFluidBuffer();
 
-    if (CanStartSteamConsumption())
-    {
+//TL044CN: FIN Integration Patch 0.0.3
+//         added dependency on Standby and chenge running value based on if the Turbine is currently processing steam
+//         (the else is in there to guard against rapid m_running changes instead of there being a constant m_running=false)
+    if (CanStartSteamConsumption() && !m_Standby) {
+        m_running = true;
         ConvertSteamToRPM();
+    } else {
+        m_running = false;
     }
 
     int NewRPM = mCurrentTurbineRPM;
@@ -277,6 +282,8 @@ float ARPMPTurbineBuilding::netFunc_getSteamDiscardPercent()
     return mSteamDiscardPercent;
 }
 
+//TL044CN: FIN Integration Patch 0.0.2
+//  added a Function to change the Steam Discard Rate via FIN Computers
 void ARPMTurbineBuilding::netFunc_setSteamDiscardPercent(float value) {
     auto rco = Cast<URPMPTurbineBuildingRCO>(
         Cast<AFGPlayerController>(GetWorld()->GetFirstPlayerController())->GetRemoteCallObjectOfClass(
@@ -285,4 +292,10 @@ void ARPMTurbineBuilding::netFunc_setSteamDiscardPercent(float value) {
     if (rco) {
         rco->SetSteamDiscard(this, value);
     }
+}
+
+//TL044CN: FIN Integration Patch 0.0.3
+//  added override function for the base Class's Check Function to correctly display Running State.
+bool ARPMTurbineBuilding::CheckMPBuildingRunningState() {
+    return !m_running;
 }
